@@ -1,0 +1,68 @@
+plugins {
+    id 'java'
+    /** org.springframework.boot is applied in isolation the plugin makes few changes to a project.
+     * Instead, the plugin detects when certain other plugins are applied and reacts accordingly.
+     */
+    id 'org.springframework.boot' version '3.1.1'
+    id 'io.spring.dependency-management' version '1.1.0'
+}
+
+/**
+ * A typical Spring Boot project will apply the groovy, java, or org.jetbrains.kotlin.jvm plugin as a minimum
+ * and also use the io.spring.dependency-management plugin or Gradle’s native bom support for dependency management.
+ *
+ * To manage dependencies in your Spring Boot application, you can either apply the io.spring.dependency-management
+ * plugin or use Gradle’s native bom support. The primary benefit of the former is that it offers property-based
+ * customization of managed versions, while using the latter will likely result in faster builds.
+ *
+ * io.spring.dependency-management allows you to omit version numbers when declaring dependencies
+ * that are managed in the bom.
+ */
+apply plugin: 'java'
+apply plugin: 'io.spring.dependency-management'
+//apply plugin: 'io.freefair.lombok'
+
+compileJava {
+    options.compilerArgs = [
+            '-Amapstruct.defaultComponentModel=spring'
+    ]
+}
+
+/*
+ * For starters, you need to add a source for 3rd party libraries.
+ */
+repositories {
+//    gradlePluginPortal()
+//    google()
+
+    //indicates that the build should resolve its dependencies from the Maven Central repository
+    mavenCentral() //This is what is for Starters :)
+}
+
+group = 'io.incondensable'
+version = '0.0.1'
+description = 'MeniYu application written in Java using Spring framework.'
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-amqp'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+
+    compileOnly 'org.projectlombok:lombok'
+    implementation 'io.jsonwebtoken:jjwt:0.9.1'
+    implementation 'javax.xml.bind:jaxb-api:2.3.1'
+    implementation 'org.mapstruct:mapstruct:1.5.5.Final'
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.4'
+
+    annotationProcessor 'org.projectlombok:lombok'
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
+}
+
+clean {
+
+}
