@@ -15,5 +15,5 @@ public class UserResponseDTO {
     private String lastname;
     private String email;
     private String username;
-    private boolean isActive;
+    private boolean isEnabled;
 }

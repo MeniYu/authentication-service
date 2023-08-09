@@ -1,4 +1,4 @@
-package io.incondensable.application.web.dto.req.login;
+package io.incondensable.application.web.dto.req.auth;
 
 import jakarta.validation.constraints.Size;
 import lombok.Getter;

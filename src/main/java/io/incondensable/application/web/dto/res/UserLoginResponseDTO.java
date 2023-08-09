@@ -1,4 +1,4 @@
-package io.incondensable.application.business.domain.vo.auth;
+package io.incondensable.application.web.dto.res;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

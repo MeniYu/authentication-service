@@ -1,9 +1,10 @@
 package io.incondensable.application.web.controllers;
 
 import io.incondensable.application.business.AuthenticationFacade;
-import io.incondensable.application.business.domain.vo.auth.UserLoginResponseDTO;
+import io.incondensable.application.web.dto.req.auth.CompleteUserSignupRequestDTO;
+import io.incondensable.application.web.dto.req.auth.UserLoginRequestDTO;
 import io.incondensable.application.web.dto.req.credentials.ForgotPasswordRequestDTO;
-import io.incondensable.application.web.dto.req.login.UserLoginRequestDTO;
+import io.incondensable.application.web.dto.res.UserLoginResponseDTO;
 import io.incondensable.application.web.dto.res.UserResponseDTO;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -47,14 +48,16 @@ public class AuthController {
         return ResponseEntity.ok("The User successfully logged out.");
     }
 
-//    @PostMapping
+    //    @PostMapping
 //    public ResponseEntity<UserLoginResponseDTO> enterUsername(@Valid @RequestBody UserLoginOtpRequestDTO request) {
 //        return ResponseEntity.ok(authFacade.loginUserWithOtpCode());
 //    }
 //
-//    @PostMapping
-//    public ResponseEntity<UserLoginResponseDTO> checkOtpCode(@Valid @RequestBody OtpCodeRequestDTO request) {
-//
-//    }
+    @PostMapping("/signup/activate")
+    public ResponseEntity<UserResponseDTO> completeSignupAndActivateUser(
+            @Valid @RequestBody CompleteUserSignupRequestDTO request
+    ) {
+        return ResponseEntity.ok(authFacade.completeSignUp(request));
+    }
 
 }

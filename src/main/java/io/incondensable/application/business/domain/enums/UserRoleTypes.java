@@ -1,4 +1,4 @@
-package io.incondensable.application.business.domain.vo.enums;
+package io.incondensable.application.business.domain.enums;
 
 /**
  * @author abbas

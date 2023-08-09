@@ -1,15 +1,13 @@
 package io.incondensable.application.business.service.otp;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.incondensable.application.business.domain.entity.Otp;
 import io.incondensable.application.business.domain.entity.User;
+import io.incondensable.application.business.domain.jms.to_notif.GeneratedOtpDTO;
 import io.incondensable.application.business.exceptions.auth.GivenOtpExpiredException;
 import io.incondensable.application.business.exceptions.auth.GivenOtpMismatchException;
 import io.incondensable.application.business.exceptions.auth.OtpTriesFinishedException;
+import io.incondensable.application.business.messaging.publishers.OtpPublisher;
 import io.incondensable.application.business.repository.UserRepository;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -20,23 +18,17 @@ import java.util.Random;
  * @author abbas
  */
 @Service
-@PropertySource({"classpath:rabbitmq-info.properties"})
 public class OtpService {
 
     private final UserRepository userRepository;
-    private final RabbitTemplate rabbitTemplate;
+    private final OtpPublisher otpPublisher;
 
-    @Value("${notifications.routing.key}")
-    private String ROUTING_KEY;
-    @Value("${exchange.name}")
-    private String EXCHANGE_NAME;
-
-    public OtpService(UserRepository userRepository, RabbitTemplate rabbitTemplate) {
+    public OtpService(UserRepository userRepository, OtpPublisher otpPublisher) {
         this.userRepository = userRepository;
-        this.rabbitTemplate = rabbitTemplate;
+        this.otpPublisher = otpPublisher;
     }
 
-    public void sendOtpCode(User user) {
+    public void sendOtpCode(User user, String subject) {
         user.setOtp(new Otp(
                 generateOtpCode(),
                 Instant.now(),
@@ -44,21 +36,16 @@ public class OtpService {
         ));
         userRepository.save(user);
 
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            String otpPayloadString = mapper.writeValueAsString(user.getOtp());
-            rabbitTemplate.convertAndSend(EXCHANGE_NAME, ROUTING_KEY, otpPayloadString);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
+        GeneratedOtpDTO dto = new GeneratedOtpDTO(subject, user.getId(), user.getEmail(), user.getOtp().getCode());
+        otpPublisher.sendOtp(dto);
     }
 
     public void validateOtpCode(User user, int enteredOtpCode) {
-        if (user.getOtp().getRemainingTries() == 0)
-            throw new OtpTriesFinishedException();
+        otpTryCountIsZero(user);
 
         if (user.getOtp().getCode() != enteredOtpCode) {
             user.getOtp().setRemainingTries(user.getOtp().getRemainingTries() - 1);
+            otpTryCountIsZero(user);
             userRepository.save(user);
             throw new GivenOtpMismatchException(enteredOtpCode, user.getOtp().getRemainingTries());
         }
@@ -74,6 +61,14 @@ public class OtpService {
     private int generateOtpCode() {
         Random random = new Random();
         return random.nextInt(900000) + 100000;
+    }
+
+    private void otpTryCountIsZero(User user) {
+        if (user.getOtp().getRemainingTries() == 0) {
+            user.setOtp(null);
+            userRepository.save(user);
+            throw new OtpTriesFinishedException();
+        }
     }
 
 }

@@ -1,11 +1,11 @@
 package io.incondensable.application.business.service.login;
 
 import io.incondensable.application.business.domain.entity.User;
-import io.incondensable.application.business.domain.vo.auth.UserLoginInfo;
 import io.incondensable.application.business.exceptions.auth.PasswordMismatchException;
 import io.incondensable.application.business.exceptions.auth.UserNotFoundWithUsernameException;
 import io.incondensable.application.business.repository.UserRepository;
 import io.incondensable.application.business.service.jwt.TokenService;
+import io.incondensable.application.web.dto.req.auth.UserLoginRequestDTO;
 import io.incondensable.security.jwt.JwtUtil;
 import io.incondensable.security.userdetails.MeniYuUserDetails;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -38,7 +38,7 @@ public final class ILoginService implements LoginService {
     }
 
     @Override
-    public Optional<User> validateUser(UserLoginInfo loginInfo) {
+    public Optional<User> validateUser(UserLoginRequestDTO dto) {
         User user;
 //        if (isUserInputEmail(loginInfo.username()))
 //            user = userRepo.findByEmail(loginInfo.getUserStringIdentity())
@@ -48,14 +48,14 @@ public final class ILoginService implements LoginService {
 //                            }
 //                    );
 //        else
-        user = userRepo.findByUsername(loginInfo.getUsername())
+        user = userRepo.findByUsername(dto.getUsername())
                 .orElseThrow(
                         () -> {
-                            throw new UserNotFoundWithUsernameException(loginInfo.getUsername());
+                            throw new UserNotFoundWithUsernameException(dto.getUsername());
                         }
                 );
 
-        if (!passEnc.matches(loginInfo.getPassword(), user.getPassword()))
+        if (!passEnc.matches(dto.getPassword(), user.getPassword()))
             throw new PasswordMismatchException();
 
         return Optional.of(user);

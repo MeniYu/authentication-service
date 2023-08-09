@@ -24,6 +24,7 @@ apply plugin: 'io.spring.dependency-management'
 
 compileJava {
     options.compilerArgs = [
+            '-parameters',
             '-Amapstruct.defaultComponentModel=spring'
     ]
 }
@@ -40,7 +41,7 @@ repositories {
 }
 
 group = 'io.incondensable'
-version = '0.0.1'
+version = '0.0.2'
 description = 'MeniYu application written in Java using Spring framework.'
 java {
     sourceCompatibility = JavaVersion.VERSION_17

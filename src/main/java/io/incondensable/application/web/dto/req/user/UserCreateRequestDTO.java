@@ -29,5 +29,4 @@ public class UserCreateRequestDTO {
     @NotBlank
     private String email;
     private RoleCreateRequestDTO role;
-    private boolean isEnabled;
 }

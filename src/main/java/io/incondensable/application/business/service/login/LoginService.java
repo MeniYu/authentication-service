@@ -1,7 +1,7 @@
 package io.incondensable.application.business.service.login;
 
 import io.incondensable.application.business.domain.entity.User;
-import io.incondensable.application.business.domain.vo.auth.UserLoginInfo;
+import io.incondensable.application.web.dto.req.auth.UserLoginRequestDTO;
 
 import java.util.Optional;
 
@@ -10,7 +10,7 @@ import java.util.Optional;
  */
 public sealed interface LoginService permits ILoginService {
 
-    Optional<User> validateUser(UserLoginInfo loginInfo);
+    Optional<User> validateUser(UserLoginRequestDTO dto);
 
     User login(User user);
 

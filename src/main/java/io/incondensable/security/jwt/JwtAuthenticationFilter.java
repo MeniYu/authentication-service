@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.incondensable.application.business.domain.entity.Token;
 import io.incondensable.application.business.domain.entity.User;
 import io.incondensable.exception.BusinessException;
-import io.incondensable.application.business.domain.vo.enums.UserRoleTypes;
+import io.incondensable.application.business.domain.enums.UserRoleTypes;
 import io.incondensable.application.business.repository.UserRepository;
 import io.incondensable.security.userdetails.MeniYuUserDetails;
 import jakarta.servlet.FilterChain;
